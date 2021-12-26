@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+    environment {
+        PATH = "/opt/maven/bin/:$PATH"
+    }
+    stages{
+        stage('clone code'){
+            steps{
+                git branch: 'master', url: 'https://github.com/ambuj1111/JenkinsWar.git'
+            }
+        }
+        stage('build'){
+            steps{
+               sh 'mvn clean install'
+            }
+        }
+        stage('deploy'){
+            steps{
+                sshagent(['deploy_user'])
+                {   sh 'scp -o StrictHostKeyChecking=no target/JenkinsWar.war ec2-user@18.221.16.68:/opt/tomcat/webapps' 
+                
+}
+            }
+        }
+    }
+}
